@@ -239,59 +239,53 @@
 
     <!-- PENTING: KODE JAVASCRIPT HARUS DI DALAM TAG SCRIPT INI -->
     <script>
-      // URL Web App Apps Script milik Anda
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZlqocaxwREWhbNbt0wR04zqYI_D8dry_fDv5vzHBWYqpl_OtG2C6DrvaUPIvIdxZL/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZlqocaxwREWhbNbt0wR04zqYI_D8dry_fDv5vzHBWYqpl_OtG2C6DrvaUPIvIdxZL/exec";
 
-      document.addEventListener('touchmove', function(e) {
-        e.preventDefault();
-      }, { passive: false });
+  document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+  }, { passive: false });
 
-      function prosesCari() {
-  var hpInput = document.getElementById('noHP');
-  var hp = hpInput.value.trim();
-  var formSec = document.getElementById('formSection');
-  var resultDiv = document.getElementById('result');
-  var loadingDiv = document.getElementById('loading');
-  var errorDiv = document.getElementById('errorMessage');
+  function prosesCari() {
+    var hpInput = document.getElementById('noHP');
+    var hp = hpInput.value.trim();
+    var formSec = document.getElementById('formSection');
+    var resultDiv = document.getElementById('result');
+    var loadingDiv = document.getElementById('loading');
+    var errorDiv = document.getElementById('errorMessage');
 
-  resultDiv.style.display = 'none';
-  loadingDiv.style.display = 'none';
-  errorDiv.style.display = 'none';
-
-  if (!hp) {
-    errorDiv.innerText = 'Silakan masukkan nomor HP terlebih dahulu.';
-    errorDiv.style.display = 'block';
-    return;
-  }
-
-  loadingDiv.style.display = 'block';
-
-  // Mengirim data nomor HP menggunakan URLSearchParams agar tidak terblokir CORS
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ noHP: hp }),
-    redirect: 'follow'
-  })
-  .then(response => response.json())
-  .then(data => {
+    resultDiv.style.display = 'none';
     loadingDiv.style.display = 'none';
-    if (data.success) {
-      formSec.style.display = 'none';
-      document.getElementById('namaPeserta').innerText = data.nama;
-      document.getElementById('nomorBIB').innerText = data.bib;
-      resultDiv.style.display = 'block';
-    } else {
-      errorDiv.innerText = data.message;
+    errorDiv.style.display = 'none';
+
+    if (!hp) {
+      errorDiv.innerText = 'Silakan masukkan nomor HP terlebih dahulu.';
       errorDiv.style.display = 'block';
+      return;
     }
-  })
-  .catch(error => {
-    loadingDiv.style.display = 'none';
-    errorDiv.innerText = 'Gagal terhubung ke server. Coba lagi.';
-    errorDiv.style.display = 'block';
-  });
-}
-    </script>
+
+    loadingDiv.style.display = 'block';
+
+    // MENGGUNAKAN METODE GET SANGAT STABIL DAN BEBAS BLOKIR CORS
+    fetch(SCRIPT_URL + "?noHP=" + encodeURIComponent(hp))
+      .then(response => response.json())
+      .then(data => {
+        loadingDiv.style.display = 'none';
+        if (data.success) {
+          formSec.style.display = 'none';
+          document.getElementById('namaPeserta').innerText = data.nama;
+          document.getElementById('nomorBIB').innerText = data.bib;
+          resultDiv.style.display = 'block';
+        } else {
+          errorDiv.innerText = data.message;
+          errorDiv.style.display = 'block';
+        }
+      })
+      .catch(error => {
+        loadingDiv.style.display = 'none';
+        errorDiv.innerText = 'Gagal terhubung ke server. Coba lagi.';
+        errorDiv.style.display = 'block';
+      });
+  }
+</script>
   </body>
 </html>

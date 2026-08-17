@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Membuka Halaman Cek BIB...</title>
+  <script>
+    // URL Web App Google Apps Script Anda (/exec)
+    var targetUrl = "https://script.google.com/macros/s/AKfycbx.../exec";
+
+    // Trik memaksa Android/iOS membuka browser eksternal
+    var isAndroid = /Android/i.test(navigator.userAgent);
+    var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+      // Intent untuk memaksa buka di Chrome Android
+      window.location.href = "intent://" + targetUrl.replace(/^https?:\/\//, "") + "#Intent;scheme=https;package=com.android.chrome;end";
+    } else if (isIOS) {
+      // Pengalihan untuk iOS Safari
+      window.location.href = targetUrl;
+    } else {
+      window.location.href = targetUrl;
+    }
+  </script>
+</head>
+<body>
+  <p style="text-align:center; margin-top:20%; font-family:sans-serif;">
+    Sedang mengalihkan ke Chrome/Safari...<br>
+    <a href="https://script.google.com/macros/s/AKfycbx.../exec">Klik di sini jika tidak terbuka otomatis</a>
+  </p>
+</body>
+</html>

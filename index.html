@@ -1,296 +1,51 @@
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FUN RUN 2026 - Cek BIB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-      html, body {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        touch-action: none;
-        -webkit-text-size-adjust: 100%;
-      }
+const SCRIPT_URL = "URL_WEB_APP_APPS_SCRIPT_ANDA_DI_SINI"; // Pastikan berakhiran /exec
 
-      * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-      }
+document.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+}, { passive: false });
 
-      body {
-        font-family: 'Montserrat', sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100vw;
-        height: 100vh;
-        padding: 8px;
-        background: linear-gradient(135deg, rgba(8, 29, 40, 0.5) 0%, rgba(11, 47, 62, 0.6) 100%), 
-                    url('https://res.cloudinary.com/dktwbdl1t/image/upload/v1787001018/unnamed_sfpbtz.jpg') center top / cover no-repeat;
-        background-color: #0b2f3e;
-      }
+function prosesCari() {
+  var hpInput = document.getElementById('noHP');
+  var hp = hpInput.value.trim();
+  var formSec = document.getElementById('formSection');
+  var resultDiv = document.getElementById('result');
+  var loadingDiv = document.getElementById('loading');
+  var errorDiv = document.getElementById('errorMessage');
 
-      .card {
-        background: rgba(13, 44, 59, 0.65);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1.5px solid rgba(255, 255, 255, 0.25);
-        border-radius: 16px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-        width: 100%;
-        max-width: 320px;
-        padding: 16px 12px; 
-        text-align: center;
-        margin: auto;
-      }
+  resultDiv.style.display = 'none';
+  loadingDiv.style.display = 'none';
+  errorDiv.style.display = 'none';
 
-      .event-tag {
-        background: #8cc63f;
-        color: #081d28;
-        font-size: 9px;
-        font-weight: 800;
-        padding: 3px 10px;
-        border-radius: 10px;
-        text-transform: uppercase;
-        display: inline-block;
-        margin-bottom: 6px;
-      }
+  if (!hp) {
+    errorDiv.innerText = 'Silakan masukkan nomor HP terlebih dahulu.';
+    errorDiv.style.display = 'block';
+    return;
+  }
 
-      h2 {
-        color: #ffffff;
-        font-size: 19px;
-        font-weight: 900;
-        margin: 0 0 2px 0;
-        text-transform: uppercase;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-      }
+  loadingDiv.style.display = 'block';
 
-      .sub-title {
-        color: #00b4d8;
-        font-size: 11px;
-        font-weight: 700;
-        margin-bottom: 12px;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-      }
-
-      .input-group {
-        margin-bottom: 12px;
-        text-align: left;
-      }
-
-      label {
-        font-size: 11px;
-        color: #e0f2fe;
-        margin-bottom: 4px;
-        display: block;
-        font-weight: 700;
-      }
-
-      input[type="tel"] {
-        width: 100%;
-        padding: 11px;
-        background: rgba(255, 255, 255, 0.2);
-        border: 2px solid #00b4d8;
-        border-radius: 8px;
-        font-size: 16px !important;
-        touch-action: manipulation;
-        color: #ffffff;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 700;
-        outline: none;
-        -webkit-appearance: none;
-      }
-
-      input[type="tel"]:focus {
-        border-color: #8cc63f;
-        background: rgba(255, 255, 255, 0.3);
-      }
-
-      button {
-        width: 100%;
-        padding: 12px;
-        background: linear-gradient(90deg, #8cc63f 0%, #7ab52d 100%);
-        color: #081d28;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 900;
-        cursor: pointer;
-        text-transform: uppercase;
-        box-shadow: 0 4px 12px rgba(140, 198, 63, 0.5);
-        touch-action: manipulation;
-      }
-
-      button:active {
-        transform: scale(0.97);
-      }
-
-      #loading {
-        margin-top: 10px;
-        font-size: 13px;
-        color: #00b4d8;
-        font-weight: 700;
-        display: none;
-      }
-
-      #result {
-        margin-top: 10px;
-        display: none;
-      }
-
-      .success-badge {
-        background: #8cc63f;
-        color: #081d28;
-        font-size: 11px;
-        font-weight: 900;
-        padding: 6px 12px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-        display: inline-block;
-        letter-spacing: 0.5px;
-      }
-
-      .bib-box {
-        background: rgba(13, 44, 59, 0.6);
-        border: 2px solid #8cc63f;
-        padding: 12px 8px;
-        border-radius: 10px;
-      }
-
-      .bib-label {
-        margin: 0;
-        font-size: 10px;
-        color: #b0d4e3;
-        letter-spacing: 1px;
-        font-weight: 800;
-      }
-
-      .nama-peserta {
-        margin: 3px 0 8px 0;
-        font-size: 17px;
-        font-weight: 900;
-        color: #ffffff;
-        word-break: break-word;
-      }
-
-      .bib-number {
-        font-size: 46px;
-        font-weight: 900;
-        color: #8cc63f;
-        margin: 2px 0;
-        line-height: 1;
-        text-shadow: 0 0 15px rgba(140, 198, 63, 0.6);
-      }
-
-      .instruction {
-        font-size: 10px;
-        color: #e0f2fe;
-        margin-top: 10px;
-        line-height: 1.3;
-      }
-
-      .error {
-        color: #ff5252;
-        font-size: 12px;
-        margin-top: 10px;
-        font-weight: 700;
-        background: rgba(255, 82, 82, 0.2);
-        padding: 8px;
-        border-radius: 6px;
-        border: 1px solid #ff5252;
-        display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <div class="event-tag">Bandung Indah Plaza 36th</div>
-      <h2>FUN RUN 2026</h2>
-      <div class="sub-title">Penukaran Racepack Mandiri</div>
-
-      <div id="formSection">
-        <div class="input-group">
-          <label for="noHP">Nomor WhatsApp / HP Peserta:</label>
-          <input type="tel" id="noHP" placeholder="Contoh: 08123456789" required autocomplete="off">
-        </div>
-
-        <button id="btnCari" onclick="prosesCari()">TAMPILKAN NOMOR BIB</button>
-      </div>
-
-      <div id="loading">Mencari Data Peserta...</div>
-
-      <div id="result">
-        <div class="success-badge">✓ BERHASIL TERVERIFIKASI</div>
-        <div class="bib-box">
-          <p class="bib-label">NAMA PESERTA</p>
-          <div class="nama-peserta" id="namaPeserta">-</div>
-          <p class="bib-label">NOMOR BIB ANDA</p>
-          <div class="bib-number" id="nomorBIB">-</div>
-        </div>
-        <p class="instruction">Tunjukkan layar HP ini bersama <b>KTP Asli</b> Anda kepada petugas di meja penukaran.</p>
-      </div>
-
-      <div id="errorMessage" class="error"></div>
-    </div>
-
-    <script>
-      // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZlqocaxwREWhbNbt0wR04zqYI_D8dry_fDv5vzHBWYqpl_OtG2C6DrvaUPIvIdxZL/exec";
-
-      document.addEventListener('touchmove', function(e) {
-        e.preventDefault();
-      }, { passive: false });
-
-      function prosesCari() {
-        var hpInput = document.getElementById('noHP');
-        var hp = hpInput.value.trim();
-        var formSec = document.getElementById('formSection');
-        var resultDiv = document.getElementById('result');
-        var loadingDiv = document.getElementById('loading');
-        var errorDiv = document.getElementById('errorMessage');
-
-        resultDiv.style.display = 'none';
-        loadingDiv.style.display = 'none';
-        errorDiv.style.display = 'none';
-
-        if (!hp) {
-          errorDiv.innerText = 'Silakan masukkan nomor HP terlebih dahulu.';
-          errorDiv.style.display = 'block';
-          return;
-        }
-
-        loadingDiv.style.display = 'block';
-
-        // MENGIRIM DATA KE GOOGLE APPS SCRIPT VIA FETCH REST API
-        fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ noHP: hp })
-        })
-        .then(response => response.json())
-        .then(data => {
-          loadingDiv.style.display = 'none';
-          if (data.success) {
-            formSec.style.display = 'none';
-            document.getElementById('namaPeserta').innerText = data.nama;
-            document.getElementById('nomorBIB').innerText = data.bib;
-            resultDiv.style.display = 'block';
-          } else {
-            errorDiv.innerText = data.message;
-            errorDiv.style.display = 'block';
-          }
-        })
-        .catch(error => {
-          loadingDiv.style.display = 'none';
-          errorDiv.innerText = 'Gagal terhubung ke server. Coba lagi.';
-          errorDiv.style.display = 'block';
-        });
-      }
-    </script>
-  </body>
-</html>
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ noHP: hp }),
+    redirect: 'follow'
+  })
+  .then(response => response.json())
+  .then(data => {
+    loadingDiv.style.display = 'none';
+    if (data.success) {
+      formSec.style.display = 'none';
+      document.getElementById('namaPeserta').innerText = data.nama;
+      document.getElementById('nomorBIB').innerText = data.bib;
+      resultDiv.style.display = 'block';
+    } else {
+      errorDiv.innerText = data.message;
+      errorDiv.style.display = 'block';
+    }
+  })
+  .catch(error => {
+    loadingDiv.style.display = 'none';
+    errorDiv.innerText = 'Gagal terhubung ke server. Pastikan URL Script benar.';
+    errorDiv.style.display = 'block';
+  });
+}
